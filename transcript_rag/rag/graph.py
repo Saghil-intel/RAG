@@ -1,3 +1,5 @@
+# graph.py
+
 """LangGraph agent (Ollama) with bounded multi-hop retrieval over TWO sources.
 
 Source priority:  1) the user's prompt   2) questionnaire (written answers)   3) transcript (spoken)
@@ -19,7 +21,7 @@ from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 
 from .config import Settings, SETTINGS
-from .llm import check_ollama, get_llm, structured, text_of
+from .llm import check_lmstudio, get_llm, structured, text_of
 from .store import Corpus, get_reranker
 
 
@@ -69,7 +71,7 @@ class RAGState(TypedDict, total=False):
 class TranscriptRAG:
     def __init__(self, cfg: Settings = SETTINGS, corpus: Corpus | None = None):
         self.cfg = cfg
-        check_ollama(cfg)
+        check_lmstudio(cfg)
         self.corpus = corpus or Corpus(cfg)
         self.reranker = get_reranker(cfg)
         self.llm = get_llm(cfg)

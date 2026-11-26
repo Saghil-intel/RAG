@@ -1,3 +1,5 @@
+# chunking.py
+
 """Multi-signal chunking for speaker-turn transcripts.
 
 Signals combined (embedding similarity is only ONE of them):

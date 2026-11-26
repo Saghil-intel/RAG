@@ -1,6 +1,6 @@
 docling>=2.0
 chromadb>=0.5
-FlagEmbedding>=1.2.10      # BGE-M3 (dense + sparse) and bge-reranker-v2-m3
+FlagEmbedding>=1.2.10     
 rank-bm25>=0.2.2
 numpy
 fastapi

@@ -1,3 +1,6 @@
+
+# config.py
+
 from __future__ import annotations
 import os
 from dataclasses import dataclass
@@ -15,38 +18,44 @@ class Settings:
     rerank_model: str = "BAAI/bge-reranker-v2-m3"
     use_fp16: bool = os.getenv("RAG_FP16", "0") == "1"
 
-    # local LLM via Ollama (used by the LangGraph agent in graph.py)
-    llm_model: str = os.getenv("RAG_LLM", "qwen3.5:4b-q4_K_M")
-    ollama_url: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-    llm_num_ctx: int = int(os.getenv("RAG_NUM_CTX", "16384"))      # Ollama's small default would silently truncate evidence
-    llm_num_predict: int = int(os.getenv("RAG_NUM_PREDICT", "1024"))  # caps runaway generations
-    llm_thinking: bool = os.getenv("RAG_THINKING", "0") == "1"     # qwen3.5 thinks by default; off = faster, cleaner JSON
+    # local LLM via LM Studio
+    llm_model: str = os.getenv("RAG_LLM", "qwen2.5-vl-3b-instruct")
+    lmstudio_url: str = os.getenv(
+        "LMSTUDIO_BASE_URL", "http://localhost:1234/v1"
+    )
+    lmstudio_api_key: str = os.getenv(
+        "LMSTUDIO_API_KEY", "lm-studio"
+    )
+
+    llm_num_ctx: int = int(os.getenv("RAG_NUM_CTX", "16384"))
+    llm_num_predict: int = int(os.getenv("RAG_NUM_PREDICT", "1024"))
+    llm_thinking: bool = os.getenv("RAG_THINKING", "0") == "1"
     llm_faithfulness_check: bool = os.getenv("RAG_FAITH_CHECK", "1") == "1"
 
-    # source priority: 1 = user prompt, 2 = questionnaire, 3 = transcript (lower number wins on conflict)
-    weight_questionnaire: float = 1.0   # soft weight applied to rerank scores when trimming evidence
+    # source priority
+    weight_questionnaire: float = 1.0
     weight_transcript: float = 0.8
-    questionnaire_k: int = 4            # questionnaire rows kept per query (own quota)
-    min_rerank_score: float = 0.02      # questionnaire rows below this are not padded in
+    questionnaire_k: int = 4
+    min_rerank_score: float = 0.02
     max_evidence_rows: int = 8
 
-    # chunking (tokens are estimated as words * 1.35)
-    short_turn_words: int = 8        # turns shorter than this are attached to their context
+    # chunking
+    short_turn_words: int = 8
     min_chunk_tokens: int = 80
     target_chunk_tokens: int = 220
     max_chunk_tokens: int = 320
-    gap_seconds: int = 90            # timestamp discontinuity signal
+    gap_seconds: int = 90
 
     # retrieval
     dense_k: int = 30
-    sparse_k: int = 30               # BGE-M3 learned sparse
-    bm25_k: int = 30                 # exact-token lexical (6737P, c7i.16xlarge, p95 ...)
+    sparse_k: int = 30
+    bm25_k: int = 30
     rrf_k: int = 60
     fused_k: int = 40
     rerank_k: int = 6
-    neighbor_window: int = 1         # turns added before/after each hit
+    neighbor_window: int = 1
 
-    # agent loop bounds (sized for a 4B model)
+    # agent loop bounds
     max_iterations: int = 3
     max_retrieval_calls: int = 8
     max_subqueries: int = 4
@@ -54,6 +63,10 @@ class Settings:
     max_revisions: int = 1
 
 
-SOURCE_PRIORITY = {"user_prompt": 1, "questionnaire": 2, "transcript": 3}
+SOURCE_PRIORITY = {
+    "user_prompt": 1,
+    "questionnaire": 2,
+    "transcript": 3
+}
 
 SETTINGS = Settings()
